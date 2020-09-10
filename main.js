@@ -1000,7 +1000,7 @@ module.exports = ".jumbotron{\r\n    background-color: white !important;\r\n}\r\
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"jumbotron\">\n  <h1 class=\"display-4\">Resume</h1>\n  <hr class=\"my-4\">\n  <p>For detailed information about my knowledge you can download my resume by clicking on the flags below.</p>\n  <div class=\"row text-center\">\n    <div class=\"col-md-6\">\n      <a><img src=\"/assets/flags/usa.svg\"></a>\n    </div>\n    <div class=\"col-md-6\">\n      <a href=\"/assets/resume/PTBR Leandro Ferrete CV.pdf\"><img src=\"/assets/flags/brazil.svg\"></a>\n    </div>\n  </div>\n</div>"
+module.exports = "<div class=\"jumbotron\">\n  <h1 class=\"display-4\">Resume</h1>\n  <hr class=\"my-4\">\n  <p>For detailed information about my knowledge you can download my resume by clicking on the flags below.</p>\n  <div class=\"row text-center\">\n    <div class=\"col-md-6\">\n      <a href=\"/assets/resume/EN Leandro Ferrete CV.pdf\"><img src=\"/assets/flags/usa.svg\"></a>\n    </div>\n    <div class=\"col-md-6\">\n      <a href=\"/assets/resume/PTBR Leandro Ferrete CV.pdf\"><img src=\"/assets/flags/brazil.svg\"></a>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
