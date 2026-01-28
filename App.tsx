@@ -32,17 +32,13 @@ const App: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState(1);
 
   // 1. Games Carousel State
+  // 1. Games Carousel State
+  // 1. Games Carousel State
   const [gameCarouselIndex, setGameCarouselIndex] = useState(0);
-  const [isGameDragging, setIsGameDragging] = useState(false);
-  const [gameStartX, setGameStartX] = useState(0);
-  const [gameCurrentTranslate, setGameCurrentTranslate] = useState(0);
   const gameCarouselRef = useRef<HTMLDivElement>(null);
 
   // 2. Projects Carousel State
   const [projectCarouselIndex, setProjectCarouselIndex] = useState(0);
-  const [isProjectDragging, setIsProjectDragging] = useState(false);
-  const [projectStartX, setProjectStartX] = useState(0);
-  const [projectCurrentTranslate, setProjectCurrentTranslate] = useState(0);
   const projectCarouselRef = useRef<HTMLDivElement>(null);
 
   // Image Fallback State
@@ -115,7 +111,7 @@ const App: React.FC = () => {
       } else if (window.innerWidth >= 768) {
         setItemsPerPage(2);
       } else {
-        setItemsPerPage(1);
+        setItemsPerPage(1.15);
       }
     };
 
@@ -464,84 +460,59 @@ const App: React.FC = () => {
     }
   }, [itemsPerPage, gameCarouselIndex, projectCarouselIndex, games.length, projects.length]);
 
-  // --- GAMES CAROUSEL LOGIC ---
-  const maxGameIndex = Math.max(0, games.length - itemsPerPage);
+  // --- CAROUSEL SCROLL HANDLERS ---
+
+  const handleScroll = (
+    ref: React.RefObject<HTMLDivElement>,
+    setIndex: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    if (ref.current) {
+      const scrollLeft = ref.current.scrollLeft;
+      // Get exact item width from the first child
+      const firstChild = ref.current.firstElementChild;
+      if (firstChild) {
+        const itemWidth = firstChild.getBoundingClientRect().width;
+        const gap = 16; // space-x-4 = 1rem = 16px
+        const effectiveWidth = itemWidth + gap;
+        const newIndex = Math.round(scrollLeft / effectiveWidth);
+        setIndex(newIndex);
+      }
+    }
+  };
+
+  const scrollToIndex = (
+    index: number,
+    ref: React.RefObject<HTMLDivElement>,
+    setIndex: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    if (ref.current) {
+      // Find width of first item
+      const item = ref.current.firstElementChild as HTMLElement;
+      if (item) {
+        const gap = 16; // 1rem gap (space-x-4)
+        const itemWidth = item.clientWidth + gap;
+        ref.current.scrollTo({ left: index * itemWidth, behavior: 'smooth' });
+      }
+    }
+    setIndex(index);
+  };
+
+  // --- GAMES LOGIC ---
   const isPrevGameDisabled = gameCarouselIndex === 0;
-  const isNextGameDisabled = gameCarouselIndex >= maxGameIndex;
+  // Approximation for disable check - precise check handled by visual scroll limits
+  const isNextGameDisabled = gameCarouselIndex >= games.length - 1;
   const shouldShowGameNav = games.length > itemsPerPage;
 
-  const nextGame = () => {
-    if (!isNextGameDisabled) {
-      setGameCarouselIndex((prev) => prev + 1);
-      trackEvent('carousel_next', { carousel: 'games' });
-    }
-  };
-  const prevGame = () => {
-    if (!isPrevGameDisabled) {
-      setGameCarouselIndex((prev) => prev - 1);
-      trackEvent('carousel_prev', { carousel: 'games' });
-    }
-  };
+  const nextGame = () => scrollToIndex(gameCarouselIndex + 1, gameCarouselRef, setGameCarouselIndex);
+  const prevGame = () => scrollToIndex(gameCarouselIndex - 1, gameCarouselRef, setGameCarouselIndex);
 
-  const handleGamePointerDown = (e: React.PointerEvent) => {
-    setIsGameDragging(true);
-    setGameStartX(e.pageX);
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-  };
-  const handleGamePointerMove = (e: React.PointerEvent) => {
-    if (!isGameDragging) return;
-    setGameCurrentTranslate(e.pageX - gameStartX);
-  };
-  const handleGamePointerUp = (e: React.PointerEvent) => {
-    if (!isGameDragging) return;
-    setIsGameDragging(false);
-    (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-    if (gameCurrentTranslate < -50 && !isNextGameDisabled) nextGame();
-    else if (gameCurrentTranslate > 50 && !isPrevGameDisabled) prevGame();
-    setGameCurrentTranslate(0);
-  };
-
-  // --- PROJECTS CAROUSEL LOGIC ---
-  const maxProjectIndex = Math.max(0, projects.length - itemsPerPage);
+  // --- PROJECTS LOGIC ---
   const isPrevProjectDisabled = projectCarouselIndex === 0;
-  const isNextProjectDisabled = projectCarouselIndex >= maxProjectIndex;
+  const isNextProjectDisabled = projectCarouselIndex >= projects.length - 1;
   const shouldShowProjectNav = projects.length > itemsPerPage;
 
-  const nextProject = () => {
-    if (!isNextProjectDisabled) {
-      setProjectCarouselIndex((prev) => prev + 1);
-      trackEvent('carousel_next', { carousel: 'projects' });
-    }
-  };
-  const prevProject = () => {
-    if (!isPrevProjectDisabled) {
-      setProjectCarouselIndex((prev) => prev - 1);
-      trackEvent('carousel_prev', { carousel: 'projects' });
-    }
-  };
-
-  const handleProjectPointerDown = (e: React.PointerEvent) => {
-    setIsProjectDragging(true);
-    setProjectStartX(e.pageX);
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-  };
-  const handleProjectPointerMove = (e: React.PointerEvent) => {
-    if (!isProjectDragging) return;
-    setProjectCurrentTranslate(e.pageX - projectStartX);
-  };
-  const handleProjectPointerUp = (e: React.PointerEvent) => {
-    if (!isProjectDragging) return;
-    setIsProjectDragging(false);
-    (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-    if (projectCurrentTranslate < -50 && !isNextProjectDisabled) nextProject();
-    else if (projectCurrentTranslate > 50 && !isPrevProjectDisabled) prevProject();
-    setProjectCurrentTranslate(0);
-  };
-
-  // Calculations for transforms
-  const itemWidthPercent = 100 / itemsPerPage;
-  const baseGameTranslate = -(gameCarouselIndex * itemWidthPercent);
-  const baseProjectTranslate = -(projectCarouselIndex * itemWidthPercent);
+  const nextProject = () => scrollToIndex(projectCarouselIndex + 1, projectCarouselRef, setProjectCarouselIndex);
+  const prevProject = () => scrollToIndex(projectCarouselIndex - 1, projectCarouselRef, setProjectCarouselIndex);
 
   const navItems = [
     { id: Section.HERO, label: t('nav.home') },
@@ -569,8 +540,8 @@ const App: React.FC = () => {
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
                   className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeSection === item.id
-                      ? 'text-brand-text bg-brand-surfaceHighlight shadow-inner'
-                      : 'text-brand-muted hover:text-brand-text hover:bg-brand-surfaceHighlight/50'
+                    ? 'text-brand-text bg-brand-surfaceHighlight shadow-inner'
+                    : 'text-brand-muted hover:text-brand-text hover:bg-brand-surfaceHighlight/50'
                     }`}
                 >
                   {item.label}
@@ -655,8 +626,8 @@ const App: React.FC = () => {
                   key={lang}
                   onClick={() => changeLanguage(lang)}
                   className={`text-sm font-bold px-4 py-2 rounded-full border border-brand-border/20 uppercase tracking-widest transition-all ${i18n.resolvedLanguage?.startsWith(lang)
-                      ? 'bg-brand-text text-brand-bg'
-                      : 'text-brand-muted hover:border-brand-text hover:text-brand-text'
+                    ? 'bg-brand-text text-brand-bg'
+                    : 'text-brand-muted hover:border-brand-text hover:text-brand-text'
                     }`}
                 >
                   {lang}
@@ -767,80 +738,71 @@ const App: React.FC = () => {
             {/* Project Carousel Container */}
             <ScrollReveal animation="slide-up">
               <div
-                className={`overflow-hidden -mx-4 px-4 py-4 ${isProjectDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                className="overflow-x-auto overflow-y-hidden flex snap-x snap-mandatory scrollbar-hide -mx-4 px-4 py-8 space-x-4"
                 ref={projectCarouselRef}
-                style={{ touchAction: 'pan-y' }}
-                onPointerDown={handleProjectPointerDown}
-                onPointerMove={handleProjectPointerMove}
-                onPointerUp={handleProjectPointerUp}
-                onPointerLeave={handleProjectPointerUp}
+                onScroll={() => handleScroll(projectCarouselRef, setProjectCarouselIndex)}
               >
-                <div
-                  className="flex"
-                  style={{
-                    transform: `translateX(calc(${baseProjectTranslate}% + ${projectCurrentTranslate}px))`,
-                    transition: isProjectDragging ? 'none' : 'transform 0.5s ease-out'
-                  }}
-                >
-                  {projects.map((project, index) => (
-                    <div key={project.id} className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3 flex h-auto">
-                      <SpotlightCard className="h-full group flex flex-col w-full">
-                        {/* Generic Abstract Header instead of Image */}
-                        <div className="h-56 overflow-hidden relative flex-shrink-0 bg-brand-surfaceHighlight/50 flex items-center justify-center border-b border-brand-border/5">
-                          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand-accent/10 via-transparent to-transparent"></div>
-                          <Code2 size={48} className="text-brand-muted/20" />
+                {projects.map((project, index) => (
+                  <div
+                    key={project.id}
+                    className="snap-start flex-shrink-0 w-[85vw] md:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)] h-auto transition-all duration-300"
+                  >
+                    <SpotlightCard className="h-full group flex flex-col w-full">
+                      {/* Generic Abstract Header instead of Image */}
+                      <div className="h-56 overflow-hidden relative flex-shrink-0 bg-brand-surfaceHighlight/50 flex items-center justify-center border-b border-brand-border/5">
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand-accent/10 via-transparent to-transparent"></div>
+                        <Code2 size={48} className="text-brand-muted/20" />
 
-                          <div className="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                            <h3 className="text-2xl font-bold text-white mb-1 drop-shadow-md">{project.title}</h3>
+                        <div className="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                          <h3 className="text-2xl font-bold text-white mb-1 drop-shadow-md">{project.title}</h3>
+                        </div>
+                      </div>
+
+                      <div className="p-6 pt-2 flex-1 flex flex-col">
+                        <p className="text-brand-muted text-sm leading-relaxed mb-6 flex-1">{project.description}</p>
+
+                        <div className="space-y-4 mt-auto">
+                          <div className="flex flex-wrap gap-2">
+                            {project.technologies.map(tech => (
+                              <span key={tech} className="px-2.5 py-1 bg-brand-surfaceHighlight text-[10px] uppercase tracking-wider text-brand-text/80 rounded border border-brand-border/10">
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="flex items-center gap-4 pt-4 border-t border-brand-border/10">
+                            {project.repoUrl && (
+                              <a
+                                href={project.repoUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-2 text-xs font-medium text-brand-text hover:text-brand-accent transition-colors uppercase tracking-wide"
+                                onClick={() => trackEvent('outbound_click', { section: 'projects', type: 'repo', url: project.repoUrl })}
+                              >
+                                <Github size={14} /> {t('software.source')}
+                              </a>
+                            )}
+                            {project.liveUrl && (
+                              <a
+                                href={project.liveUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex items-center gap-2 text-xs font-medium text-brand-text hover:text-brand-accent transition-colors uppercase tracking-wide"
+                                onClick={() => trackEvent('outbound_click', { section: 'projects', type: 'live', url: project.liveUrl })}
+                              >
+                                <ExternalLink size={14} /> {t('software.visit')}
+                              </a>
+                            )}
+                            {!project.repoUrl && !project.liveUrl && (
+                              <div className="flex items-center gap-2 text-xs font-bold text-brand-muted/70 uppercase tracking-wide select-none">
+                                <Lock size={14} /> {t('software.private')}
+                              </div>
+                            )}
                           </div>
                         </div>
-
-                        <div className="p-6 pt-2 flex-1 flex flex-col">
-                          <p className="text-brand-muted text-sm leading-relaxed mb-6 flex-1">{project.description}</p>
-
-                          <div className="space-y-4 mt-auto">
-                            <div className="flex flex-wrap gap-2">
-                              {project.technologies.map(tech => (
-                                <span key={tech} className="px-2.5 py-1 bg-brand-surfaceHighlight text-[10px] uppercase tracking-wider text-brand-text/80 rounded border border-brand-border/10">
-                                  {tech}
-                                </span>
-                              ))}
-                            </div>
-                            <div className="flex items-center gap-4 pt-4 border-t border-brand-border/10">
-                              {project.repoUrl && (
-                                <a
-                                  href={project.repoUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex items-center gap-2 text-xs font-medium text-brand-text hover:text-brand-accent transition-colors uppercase tracking-wide"
-                                  onClick={() => trackEvent('outbound_click', { section: 'projects', type: 'repo', url: project.repoUrl })}
-                                >
-                                  <Github size={14} /> {t('software.source')}
-                                </a>
-                              )}
-                              {project.liveUrl && (
-                                <a
-                                  href={project.liveUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="flex items-center gap-2 text-xs font-medium text-brand-text hover:text-brand-accent transition-colors uppercase tracking-wide"
-                                  onClick={() => trackEvent('outbound_click', { section: 'projects', type: 'live', url: project.liveUrl })}
-                                >
-                                  <ExternalLink size={14} /> {t('software.visit')}
-                                </a>
-                              )}
-                              {!project.repoUrl && !project.liveUrl && (
-                                <div className="flex items-center gap-2 text-xs font-bold text-brand-muted/70 uppercase tracking-wide select-none">
-                                  <Lock size={14} /> {t('software.private')}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </SpotlightCard>
-                    </div>
-                  ))}
-                </div>
+                      </div>
+                    </SpotlightCard>
+                  </div>
+                ))}
               </div>
             </ScrollReveal>
           </div>
@@ -886,89 +848,91 @@ const App: React.FC = () => {
             {/* Games Carousel Container */}
             <ScrollReveal animation="slide-up">
               <div
-                className={`overflow-hidden -mx-4 px-4 py-4 ${isGameDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                className="overflow-x-auto overflow-y-hidden flex snap-x snap-mandatory scrollbar-hide -mx-4 px-4 py-8 space-x-4"
                 ref={gameCarouselRef}
-                style={{ touchAction: 'pan-y' }} // Allows vertical scroll but handles horizontal swipe via JS
-                onPointerDown={handleGamePointerDown}
-                onPointerMove={handleGamePointerMove}
-                onPointerUp={handleGamePointerUp}
-                onPointerLeave={handleGamePointerUp} // Safety fallback, though capture handles most cases
+                onScroll={() => handleScroll(gameCarouselRef, setGameCarouselIndex)}
               >
-                <div
-                  className="flex"
-                  style={{
-                    // Dynamic transformation including drag offset
-                    transform: `translateX(calc(${baseGameTranslate}% + ${gameCurrentTranslate}px))`,
-                    transition: isGameDragging ? 'none' : 'transform 0.5s ease-out'
-                  }}
-                >
-                  {games.map((game, index) => (
-                    (() => {
-                      const isActive = activeGameCards.has(game.id);
-                      return (
+                {games.map((game, index) => (
+                  (() => {
+                    const isActive = activeGameCards.has(game.id);
+                    return (
+                      <div
+                        key={game.id}
+                        className="snap-start flex-shrink-0 w-[85vw] md:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)] h-auto transition-all duration-300"
+                      >
                         <div
-                          key={game.id}
-                          className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3 flex h-auto"
+                          className="group relative rounded-2xl overflow-hidden bg-brand-surface border border-brand-border/5 hover:border-brand-accent/50 transition-all duration-500 hover:-translate-y-2 shadow-lg hover:shadow-brand-accent/10 h-full flex flex-col w-full"
+                          data-game-id={game.id}
+                          ref={(el) => {
+                            if (el) {
+                              gameCardRefs.current.set(game.id, el);
+                            } else {
+                              gameCardRefs.current.delete(game.id);
+                            }
+                          }}
                         >
-                          <div
-                            className="group relative rounded-2xl overflow-hidden bg-brand-surface border border-brand-border/5 hover:border-brand-accent/50 transition-all duration-500 hover:-translate-y-2 shadow-lg hover:shadow-brand-accent/10 h-full flex flex-col w-full"
-                            data-game-id={game.id}
-                            ref={(el) => {
-                              if (el) {
-                                gameCardRefs.current.set(game.id, el);
-                              } else {
-                                gameCardRefs.current.delete(game.id);
-                              }
-                            }}
-                          >
-                            <div className="aspect-[4/3] w-full relative overflow-hidden flex-shrink-0">
-                              <img
-                                src={game.thumbnailUrl}
-                                alt={game.title}
-                                draggable={false}
-                                className={`w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 ${isActive ? 'grayscale-0' : ''}`}
-                              />
-                              <div className={`absolute inset-0 transition-colors duration-300 ${isActive ? 'bg-brand-bg/40' : 'bg-brand-bg/60'} group-hover:bg-brand-bg/40`}></div>
+                          <div className="aspect-[4/3] w-full relative overflow-hidden flex-shrink-0">
+                            <img
+                              src={game.thumbnailUrl}
+                              alt={game.title}
+                              draggable={false}
+                              className={`w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 ${isActive ? 'grayscale-0' : ''}`}
+                            />
+                            <div className={`absolute inset-0 transition-colors duration-300 ${isActive ? 'bg-brand-bg/40' : 'bg-brand-bg/60'} group-hover:bg-brand-bg/40`}></div>
 
-                              <div className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 transform ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} group-hover:opacity-100 group-hover:translate-y-0`}>
-                              <button 
+                            <div className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 transform ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} group-hover:opacity-100 group-hover:translate-y-0`}>
+                              <button
                                 onClick={(e) => {
-                                   e.stopPropagation();
-                                   openGame(game);
+                                  e.stopPropagation();
+                                  openGame(game);
                                 }}
                                 onPointerDown={(e) => e.stopPropagation()}
                                 className="bg-white text-brand-bg w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-110 transition-transform cursor-pointer"
                               >
-                                  <Play fill="currentColor" className="ml-1" size={24} />
-                                </button>
+                                <Play fill="currentColor" className="ml-1" size={24} />
+                              </button>
                               <button
                                 onClick={(e) => {
-                                   e.stopPropagation();
-                                   openGame(game);
+                                  e.stopPropagation();
+                                  openGame(game);
                                 }}
                                 onPointerDown={(e) => e.stopPropagation()}
                                 className="mt-4 text-white font-bold tracking-widest text-sm bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm hover:bg-black/70 transition-colors cursor-pointer"
                               >
                                 {t('games.play_now')}
-                                </button>
-                              </div>
-                            </div>
-
-                            <div className="p-6 bg-brand-surfaceHighlight/30 backdrop-blur-sm border-t border-brand-border/5 flex-1">
-                              <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-xl font-bold text-brand-text truncate pr-2">{game.title}</h3>
-                                <span className="text-[10px] font-mono text-brand-accent border border-brand-accent/30 px-2 py-0.5 rounded uppercase whitespace-nowrap">
-                                  {game.engine}
-                                </span>
-                              </div>
-                              <p className="text-sm text-brand-muted line-clamp-2">{game.description}</p>
+                              </button>
                             </div>
                           </div>
+
+                          <div className="p-6 bg-brand-surfaceHighlight/30 backdrop-blur-sm border-t border-brand-border/5 flex-1">
+                            <div className="flex justify-between items-center mb-2">
+                              <h3 className="text-xl font-bold text-brand-text truncate pr-2">{game.title}</h3>
+                              <span className="text-[10px] font-mono text-brand-accent border border-brand-accent/30 px-2 py-0.5 rounded uppercase whitespace-nowrap">
+                                {game.engine}
+                              </span>
+                            </div>
+                            <p className="text-sm text-brand-muted line-clamp-2">{game.description}</p>
+                          </div>
                         </div>
-                      );
-                    })()
-                  ))}
-                </div>
+                      </div>
+                    );
+                  })()
+                ))}
+              </div>
+
+              {/* Pagination Dots */}
+              <div className="flex justify-center mt-8 gap-3">
+                {games.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => scrollToIndex(idx, gameCarouselRef, setGameCarouselIndex)}
+                    className={`h-2 rounded-full transition-all duration-300 ${Math.round(gameCarouselIndex) === idx
+                      ? 'w-8 bg-brand-accent shadow-[0_0_10px_rgba(var(--color-accent),0.5)]'
+                      : 'w-2 bg-brand-border/30 hover:bg-brand-border/60'
+                      }`}
+                    aria-label={`Go to game ${idx + 1}`}
+                  />
+                ))}
               </div>
             </ScrollReveal>
           </div>
