@@ -360,6 +360,19 @@ const App: React.FC = () => {
     !game.description.startsWith('data.games.')
   ));
 
+  const openGame = (game: Game) => {
+    trackEvent('game_open', { game_id: game.id, game_title: game.title });
+    setActiveGame(game);
+    window.location.hash = `#/play/${game.id}`;
+  };
+
+  const closeGame = () => {
+    if (window.location.hash.startsWith('#/play/')) {
+      window.location.hash = `#${Section.GAMES}`;
+    }
+    setActiveGame(null);
+  };
+
   useEffect(() => {
     const mql = window.matchMedia('(max-width: 767px)');
     let observer: IntersectionObserver | null = null;
@@ -415,6 +428,27 @@ const App: React.FC = () => {
       }
     };
   }, [games.length]);
+
+  useEffect(() => {
+    const handleGameHash = () => {
+      const hash = window.location.hash;
+      const match = hash.match(/^#\/play\/(.+)$/) || hash.match(/^#play\/(.+)$/);
+      if (!match) {
+        return;
+      }
+      const gameId = match[1];
+      const game = games.find((g) => g.id === gameId);
+      if (game) {
+        setActiveGame(game);
+        trackEvent('game_deeplink_open', { game_id: game.id, game_title: game.title });
+        scrollTo(Section.GAMES);
+      }
+    };
+
+    handleGameHash();
+    window.addEventListener('hashchange', handleGameHash);
+    return () => window.removeEventListener('hashchange', handleGameHash);
+  }, [games]);
 
   // Ensure carousel indexes stay within bounds
   useEffect(() => {
@@ -897,27 +931,25 @@ const App: React.FC = () => {
                               <div className={`absolute inset-0 transition-colors duration-300 ${isActive ? 'bg-brand-bg/40' : 'bg-brand-bg/60'} group-hover:bg-brand-bg/40`}></div>
 
                               <div className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 transform ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} group-hover:opacity-100 group-hover:translate-y-0`}>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    trackEvent('game_open', { game_id: game.id, game_title: game.title });
-                                    setActiveGame(game);
-                                  }}
-                                  onPointerDown={(e) => e.stopPropagation()}
-                                  className="bg-white text-brand-bg w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-110 transition-transform cursor-pointer"
-                                >
+                              <button 
+                                onClick={(e) => {
+                                   e.stopPropagation();
+                                   openGame(game);
+                                }}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                className="bg-white text-brand-bg w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-110 transition-transform cursor-pointer"
+                              >
                                   <Play fill="currentColor" className="ml-1" size={24} />
                                 </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    trackEvent('game_open', { game_id: game.id, game_title: game.title });
-                                    setActiveGame(game);
-                                  }}
-                                  onPointerDown={(e) => e.stopPropagation()}
-                                  className="mt-4 text-white font-bold tracking-widest text-sm bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm hover:bg-black/70 transition-colors cursor-pointer"
-                                >
-                                  {t('games.play_now')}
+                              <button
+                                onClick={(e) => {
+                                   e.stopPropagation();
+                                   openGame(game);
+                                }}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                className="mt-4 text-white font-bold tracking-widest text-sm bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm hover:bg-black/70 transition-colors cursor-pointer"
+                              >
+                                {t('games.play_now')}
                                 </button>
                               </div>
                             </div>
@@ -1143,7 +1175,7 @@ const App: React.FC = () => {
             game={activeGame}
             onClose={() => {
               trackEvent('game_close', { game_id: activeGame.id, game_title: activeGame.title });
-              setActiveGame(null);
+              closeGame();
             }}
           />
         )}
