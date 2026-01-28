@@ -612,12 +612,12 @@ const App: React.FC = () => {
             </ScrollReveal>
             
             <div className="min-h-[160px] sm:min-h-[240px]">
-              <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight mb-8 leading-tight">
-                <span className="text-gradient">
-                  <TypewriterText text={t('hero.title1')} delay={0.2} />
-                </span> <br/>
-                <span className="text-gradient-accent">
-                   <TypewriterText text={t('hero.title2')} delay={1.5} />
+              <h1 className="hero-title text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight mb-8 leading-[1.15] text-center mx-auto max-w-[16ch] sm:max-w-none pb-2">
+                <span className="text-gradient block">
+                  <TypewriterText text={t('hero.title1')} delay={0.2} className="block" />
+                </span>
+                <span className="text-gradient-accent block">
+                   <TypewriterText text={t('hero.title2')} delay={1.5} className="block" />
                 </span>
               </h1>
             </div>
