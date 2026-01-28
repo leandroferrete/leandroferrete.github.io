@@ -120,7 +120,7 @@ const resources = {
             description: 'High-speed ring runner built with Ionic, featuring responsive controls, score streaks, and modern mobile UI.'
           },
           'g1': {
-            description: 'Fast-paced arcade shooter showcasing optimized physics and AI enemy behaviors.'
+            description: 'Minimalist puzzle game with tight controls, rhythmic pacing, and a bold red aesthetic.'
           },
           'g2': {
             description: 'Procedural generation engine creating infinite, unique levels in real-time.'
@@ -248,7 +248,7 @@ const resources = {
             description: 'Runner de aneis em alta velocidade feito com Ionic, com controles responsivos, combos de pontuacao e UI mobile moderna.'
           },
           'g1': {
-            description: 'Shooter arcade rápido demonstrando física otimizada e comportamentos de inimigos via IA.'
+            description: 'Puzzle minimalista com controles precisos, ritmo consistente e uma estética vermelha marcante.'
           },
           'g2': {
             description: 'Engine de geração procedural criando níveis infinitos e únicos em tempo real.'
@@ -406,5 +406,6 @@ i18n
   });
 
 export default i18n;
+
 
 

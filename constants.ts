@@ -108,6 +108,14 @@ export const GAMES_METADATA: GameMetadata[] = [
     gameUrl: 'games/orbidash/index.html',
     genre: 'Arcade',
     engine: 'Ionic'
+  },
+  {
+    id: 'g1',
+    title: 'BLOC. Red Edition',
+    thumbnailUrl: 'games/bloc-game/thumbnail.png',
+    gameUrl: 'games/bloc-game/index.html',
+    genre: 'Puzzle',
+    engine: 'HTML5'
   }
 ];
 
