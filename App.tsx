@@ -24,10 +24,10 @@ const App: React.FC = () => {
   const gameScoreMilestonesRef = useRef<Set<number>>(new Set());
   const gameCardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const [activeGameCards, setActiveGameCards] = useState<Set<string>>(new Set());
-  
+
   // Theme State
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  
+
   // --- CAROUSEL CONFIGURATION ---
   const [itemsPerPage, setItemsPerPage] = useState(1);
 
@@ -69,6 +69,43 @@ const App: React.FC = () => {
     window.addEventListener('hashchange', sendPageView);
     return () => window.removeEventListener('hashchange', sendPageView);
   }, []);
+
+  // SEO: Update Meta Tags on Language Change
+  useEffect(() => {
+    // Update Title
+    const title = t('meta.title', { defaultValue: 'Leandro Ferrete | Senior .NET Engineer & AI Architect' });
+    document.title = title;
+
+    // Update Meta Description
+    const description = t('meta.description', { defaultValue: 'Senior .NET Engineer & AI Specialist. Expert in High-Performance Microservices, Clean Architecture, and Interactive Game Development.' });
+
+    // Helper to update or create meta tag
+    const updateMeta = (selector: string, content: string) => {
+      let el = document.querySelector(selector);
+      if (!el) {
+        // Create if missing (rare but good fallback)
+        el = document.createElement('meta');
+        if (selector.startsWith('meta[name=')) {
+          el.setAttribute('name', selector.replace('meta[name="', '').replace('"]', ''));
+        } else if (selector.startsWith('meta[property=')) {
+          el.setAttribute('property', selector.replace('meta[property="', '').replace('"]', ''));
+        } else if (selector.startsWith('meta[itemprop=')) {
+          el.setAttribute('itemprop', selector.replace('meta[itemprop="', '').replace('"]', ''));
+        }
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+    };
+
+    updateMeta('meta[name="description"]', description);
+    updateMeta('meta[property="og:title"]', title);
+    updateMeta('meta[property="og:description"]', description);
+    updateMeta('meta[name="twitter:title"]', title);
+    updateMeta('meta[name="twitter:description"]', description);
+    updateMeta('meta[itemprop="name"]', title);
+    updateMeta('meta[itemprop="description"]', description);
+
+  }, [i18n.resolvedLanguage, t]);
 
   // Handle Resize for Carousel
   useEffect(() => {
@@ -306,8 +343,8 @@ const App: React.FC = () => {
       description
     };
   }).filter((proj) => (
-    proj.title && proj.description && 
-    !proj.title.startsWith('data.projects.') && 
+    proj.title && proj.description &&
+    !proj.title.startsWith('data.projects.') &&
     !proj.description.startsWith('data.projects.')
   ));
 
@@ -483,25 +520,24 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <div className="min-h-screen relative font-sans transition-colors duration-500">
-        
+
         {/* Global Progress Bar */}
         <ProgressBar />
 
         {/* Premium Floating Navbar */}
         <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
           <div className={`pointer-events-auto transition-all duration-300 glass-nav rounded-full px-2 py-2 flex items-center gap-1 sm:gap-2 ${scrolled ? 'shadow-2xl scale-100' : 'scale-105'}`}>
-            
+
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1 sm:gap-2">
               {navItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
-                  className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                    activeSection === item.id
+                  className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${activeSection === item.id
                       ? 'text-brand-text bg-brand-surfaceHighlight shadow-inner'
                       : 'text-brand-muted hover:text-brand-text hover:bg-brand-surfaceHighlight/50'
-                  }`}
+                    }`}
                 >
                   {item.label}
                 </button>
@@ -510,7 +546,7 @@ const App: React.FC = () => {
 
             {/* Mobile Menu Toggle */}
             <div className="md:hidden flex items-center">
-              <button 
+              <button
                 onClick={() => setIsMobileMenuOpen(true)}
                 className="p-3 rounded-full text-brand-text hover:bg-brand-surfaceHighlight/50 transition-colors"
                 aria-label="Open Menu"
@@ -518,25 +554,25 @@ const App: React.FC = () => {
                 <Menu size={20} />
               </button>
             </div>
-            
+
             <div className="w-px h-6 bg-brand-border/20 mx-1 hidden md:block"></div>
-            
+
             {/* Language Switcher (Desktop) */}
             <div className="hidden md:flex gap-1">
-              <button 
-                onClick={() => changeLanguage('en')} 
+              <button
+                onClick={() => changeLanguage('en')}
                 className={`text-xs font-bold px-2 py-1 rounded transition-colors ${i18n.resolvedLanguage === 'en' ? 'text-brand-text bg-brand-surfaceHighlight/50' : 'text-brand-muted hover:text-brand-text'}`}
               >
                 EN
               </button>
-              <button 
-                onClick={() => changeLanguage('pt')} 
+              <button
+                onClick={() => changeLanguage('pt')}
                 className={`text-xs font-bold px-2 py-1 rounded transition-colors ${i18n.resolvedLanguage?.startsWith('pt') ? 'text-brand-text bg-brand-surfaceHighlight/50' : 'text-brand-muted hover:text-brand-text'}`}
               >
                 PT
               </button>
-              <button 
-                onClick={() => changeLanguage('es')} 
+              <button
+                onClick={() => changeLanguage('es')}
                 className={`text-xs font-bold px-2 py-1 rounded transition-colors ${i18n.resolvedLanguage?.startsWith('es') ? 'text-brand-text bg-brand-surfaceHighlight/50' : 'text-brand-muted hover:text-brand-text'}`}
               >
                 ES
@@ -546,7 +582,7 @@ const App: React.FC = () => {
             <div className="w-px h-6 bg-brand-border/20 mx-1"></div>
 
             {/* Theme Toggle */}
-            <button 
+            <button
               onClick={toggleTheme}
               className="p-2 rounded-full text-brand-muted hover:text-brand-accent transition-colors hover:bg-brand-surfaceHighlight/50"
               aria-label="Toggle Theme"
@@ -559,65 +595,64 @@ const App: React.FC = () => {
         {/* Mobile Full Screen Menu Overlay */}
         {isMobileMenuOpen && (
           <div className="fixed inset-0 z-[60] bg-brand-bg/95 backdrop-blur-xl animate-fade-in flex flex-col items-center justify-center">
-             <button 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="absolute top-8 right-8 p-3 rounded-full bg-brand-surfaceHighlight/50 text-brand-text hover:bg-brand-accent hover:text-white transition-all duration-300"
-             >
-                <X size={28} />
-             </button>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="absolute top-8 right-8 p-3 rounded-full bg-brand-surfaceHighlight/50 text-brand-text hover:bg-brand-accent hover:text-white transition-all duration-300"
+            >
+              <X size={28} />
+            </button>
 
-             <nav className="flex flex-col items-center gap-8 mb-12">
-                {navItems.map((item, index) => (
-                   <button
-                      key={item.id}
-                      onClick={() => scrollTo(item.id)}
-                      className="text-3xl font-light tracking-wide text-brand-text hover:text-brand-accent transition-colors duration-300 transform hover:scale-110"
-                      style={{ animation: `slideUp 0.5s ease-out forwards ${index * 0.1}s`, opacity: 0 }}
-                   >
-                      {item.label}
-                   </button>
-                ))}
-             </nav>
+            <nav className="flex flex-col items-center gap-8 mb-12">
+              {navItems.map((item, index) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollTo(item.id)}
+                  className="text-3xl font-light tracking-wide text-brand-text hover:text-brand-accent transition-colors duration-300 transform hover:scale-110"
+                  style={{ animation: `slideUp 0.5s ease-out forwards ${index * 0.1}s`, opacity: 0 }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </nav>
 
-             <div className="flex gap-4 mt-8 animate-slide-up" style={{ animationDelay: '0.4s' }}>
-                {['en', 'pt', 'es'].map((lang) => (
-                   <button
-                      key={lang}
-                      onClick={() => changeLanguage(lang)}
-                      className={`text-sm font-bold px-4 py-2 rounded-full border border-brand-border/20 uppercase tracking-widest transition-all ${
-                         i18n.resolvedLanguage?.startsWith(lang) 
-                         ? 'bg-brand-text text-brand-bg' 
-                         : 'text-brand-muted hover:border-brand-text hover:text-brand-text'
-                      }`}
-                   >
-                      {lang}
-                   </button>
-                ))}
-             </div>
+            <div className="flex gap-4 mt-8 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+              {['en', 'pt', 'es'].map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => changeLanguage(lang)}
+                  className={`text-sm font-bold px-4 py-2 rounded-full border border-brand-border/20 uppercase tracking-widest transition-all ${i18n.resolvedLanguage?.startsWith(lang)
+                      ? 'bg-brand-text text-brand-bg'
+                      : 'text-brand-muted hover:border-brand-text hover:text-brand-text'
+                    }`}
+                >
+                  {lang}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
         {/* Hero Section */}
         <section id={Section.HERO} className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 pt-20 pb-10">
           <div className="absolute inset-0 pointer-events-none">
-             <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-brand-accent/20 rounded-full blur-[120px] animate-pulse-glow"></div>
-             <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[100px]" style={{animationDelay: '1s'}}></div>
+            <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-brand-accent/20 rounded-full blur-[120px] animate-pulse-glow"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[100px]" style={{ animationDelay: '1s' }}></div>
           </div>
-          
+
           <div className="max-w-5xl mx-auto text-center relative z-10 w-full">
             <ScrollReveal animation="fade-in">
               <div className="inline-block px-4 py-1.5 mb-8 border border-brand-border/10 rounded-full bg-brand-surface/5 backdrop-blur-sm">
                 <span className="text-sm font-medium tracking-wider text-brand-accentLight uppercase">{t('hero.badge')}</span>
               </div>
             </ScrollReveal>
-            
+
             <div className="min-h-[160px] sm:min-h-[240px]">
               <h1 className="hero-title text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight mb-8 leading-[1.15] text-center mx-auto max-w-[16ch] sm:max-w-none pb-2">
                 <span className="text-gradient block">
                   <TypewriterText text={t('hero.title1')} delay={0.2} className="block" />
                 </span>
                 <span className="text-gradient-accent block">
-                   <TypewriterText text={t('hero.title2')} delay={1.5} className="block" />
+                  <TypewriterText text={t('hero.title2')} delay={1.5} className="block" />
                 </span>
               </h1>
             </div>
@@ -627,16 +662,16 @@ const App: React.FC = () => {
                 {t('hero.subtitle')}
               </p>
             </ScrollReveal>
-            
+
             <ScrollReveal animation="slide-up" delay={2.8}>
               <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
-                <button 
+                <button
                   onClick={() => scrollTo(Section.SOFTWARE)}
                   className="group relative px-8 py-4 bg-brand-text text-brand-bg rounded-full font-semibold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(99,102,241,0.3)]"
                 >
                   {t('hero.btn_work')}
                 </button>
-                <button 
+                <button
                   onClick={() => scrollTo(Section.CONTACT)}
                   className="px-8 py-4 rounded-full border border-brand-border/20 text-brand-text font-medium hover:bg-brand-surfaceHighlight/50 transition-all hover:border-brand-border/40"
                 >
@@ -645,7 +680,7 @@ const App: React.FC = () => {
               </div>
             </ScrollReveal>
           </div>
-          
+
           <div className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce text-brand-muted/50 hidden lg:block">
             <ChevronDown size={24} />
           </div>
@@ -658,33 +693,33 @@ const App: React.FC = () => {
               <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
                 <div className="relative">
                   <div className="flex flex-wrap items-center gap-4 mb-2">
-                      <h2 className="text-3xl sm:text-5xl font-bold text-brand-text">{t('software.title')}</h2>
-                      
-                      {/* Elegant 'Work in Progress' Badge */}
-                      <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 backdrop-blur-md">
-                          <Loader2 size={14} className="text-amber-500 animate-spin" />
-                          <span className="text-[10px] font-bold tracking-widest text-amber-500 uppercase">{t('software.status_badge')}</span>
-                      </div>
+                    <h2 className="text-3xl sm:text-5xl font-bold text-brand-text">{t('software.title')}</h2>
+
+                    {/* Elegant 'Work in Progress' Badge */}
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 backdrop-blur-md">
+                      <Loader2 size={14} className="text-amber-500 animate-spin" />
+                      <span className="text-[10px] font-bold tracking-widest text-amber-500 uppercase">{t('software.status_badge')}</span>
+                    </div>
                   </div>
-                  
+
                   <div className="h-1 w-20 bg-brand-accent rounded-full mb-6"></div>
-                  
+
                   {/* Status Message */}
                   <p className="text-brand-muted max-w-xl text-lg font-light leading-relaxed border-l-2 border-amber-500/30 pl-4">
-                     {t('software.status_desc')}
+                    {t('software.status_desc')}
                   </p>
                 </div>
-                
-                 {/* Project Carousel Navigation (Desktop Only) */}
+
+                {/* Project Carousel Navigation (Desktop Only) */}
                 <div className={`hidden md:flex gap-2 ${shouldShowProjectNav ? '' : 'opacity-0 pointer-events-none'}`}>
-                  <button 
+                  <button
                     onClick={prevProject}
                     disabled={isPrevProjectDisabled}
                     className={`p-3 rounded-full border border-brand-border/10 bg-brand-surfaceHighlight/50 hover:bg-brand-surfaceHighlight text-brand-text transition-all active:scale-95 ${isPrevProjectDisabled ? 'opacity-30 cursor-not-allowed' : ''}`}
                   >
                     <ChevronLeft size={24} />
                   </button>
-                  <button 
+                  <button
                     onClick={nextProject}
                     disabled={isNextProjectDisabled}
                     className={`p-3 rounded-full border border-brand-border/10 bg-brand-surfaceHighlight/50 hover:bg-brand-surfaceHighlight text-brand-text transition-all active:scale-95 ${isNextProjectDisabled ? 'opacity-30 cursor-not-allowed' : ''}`}
@@ -696,8 +731,8 @@ const App: React.FC = () => {
             </ScrollReveal>
 
             {/* Project Carousel Container */}
-             <ScrollReveal animation="slide-up">
-              <div 
+            <ScrollReveal animation="slide-up">
+              <div
                 className={`overflow-hidden -mx-4 px-4 py-4 ${isProjectDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 ref={projectCarouselRef}
                 style={{ touchAction: 'pan-y' }}
@@ -705,70 +740,70 @@ const App: React.FC = () => {
                 onPointerMove={handleProjectPointerMove}
                 onPointerUp={handleProjectPointerUp}
                 onPointerLeave={handleProjectPointerUp}
-              > 
-                <div 
+              >
+                <div
                   className="flex"
-                  style={{ 
-                     transform: `translateX(calc(${baseProjectTranslate}% + ${projectCurrentTranslate}px))`,
-                     transition: isProjectDragging ? 'none' : 'transform 0.5s ease-out'
+                  style={{
+                    transform: `translateX(calc(${baseProjectTranslate}% + ${projectCurrentTranslate}px))`,
+                    transition: isProjectDragging ? 'none' : 'transform 0.5s ease-out'
                   }}
                 >
-                {projects.map((project, index) => (
+                  {projects.map((project, index) => (
                     <div key={project.id} className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3 flex h-auto">
-                        <SpotlightCard className="h-full group flex flex-col w-full">
-                          {/* Generic Abstract Header instead of Image */}
-                          <div className="h-56 overflow-hidden relative flex-shrink-0 bg-brand-surfaceHighlight/50 flex items-center justify-center border-b border-brand-border/5">
-                            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand-accent/10 via-transparent to-transparent"></div>
-                            <Code2 size={48} className="text-brand-muted/20" />
-                            
-                            <div className="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                              <h3 className="text-2xl font-bold text-white mb-1 drop-shadow-md">{project.title}</h3>
+                      <SpotlightCard className="h-full group flex flex-col w-full">
+                        {/* Generic Abstract Header instead of Image */}
+                        <div className="h-56 overflow-hidden relative flex-shrink-0 bg-brand-surfaceHighlight/50 flex items-center justify-center border-b border-brand-border/5">
+                          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand-accent/10 via-transparent to-transparent"></div>
+                          <Code2 size={48} className="text-brand-muted/20" />
+
+                          <div className="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 className="text-2xl font-bold text-white mb-1 drop-shadow-md">{project.title}</h3>
+                          </div>
+                        </div>
+
+                        <div className="p-6 pt-2 flex-1 flex flex-col">
+                          <p className="text-brand-muted text-sm leading-relaxed mb-6 flex-1">{project.description}</p>
+
+                          <div className="space-y-4 mt-auto">
+                            <div className="flex flex-wrap gap-2">
+                              {project.technologies.map(tech => (
+                                <span key={tech} className="px-2.5 py-1 bg-brand-surfaceHighlight text-[10px] uppercase tracking-wider text-brand-text/80 rounded border border-brand-border/10">
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                            <div className="flex items-center gap-4 pt-4 border-t border-brand-border/10">
+                              {project.repoUrl && (
+                                <a
+                                  href={project.repoUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex items-center gap-2 text-xs font-medium text-brand-text hover:text-brand-accent transition-colors uppercase tracking-wide"
+                                  onClick={() => trackEvent('outbound_click', { section: 'projects', type: 'repo', url: project.repoUrl })}
+                                >
+                                  <Github size={14} /> {t('software.source')}
+                                </a>
+                              )}
+                              {project.liveUrl && (
+                                <a
+                                  href={project.liveUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex items-center gap-2 text-xs font-medium text-brand-text hover:text-brand-accent transition-colors uppercase tracking-wide"
+                                  onClick={() => trackEvent('outbound_click', { section: 'projects', type: 'live', url: project.liveUrl })}
+                                >
+                                  <ExternalLink size={14} /> {t('software.visit')}
+                                </a>
+                              )}
+                              {!project.repoUrl && !project.liveUrl && (
+                                <div className="flex items-center gap-2 text-xs font-bold text-brand-muted/70 uppercase tracking-wide select-none">
+                                  <Lock size={14} /> {t('software.private')}
+                                </div>
+                              )}
                             </div>
                           </div>
-                          
-                          <div className="p-6 pt-2 flex-1 flex flex-col">
-                            <p className="text-brand-muted text-sm leading-relaxed mb-6 flex-1">{project.description}</p>
-                            
-                            <div className="space-y-4 mt-auto">
-                              <div className="flex flex-wrap gap-2">
-                                {project.technologies.map(tech => (
-                                  <span key={tech} className="px-2.5 py-1 bg-brand-surfaceHighlight text-[10px] uppercase tracking-wider text-brand-text/80 rounded border border-brand-border/10">
-                                    {tech}
-                                  </span>
-                                ))}
-                              </div>
-                              <div className="flex items-center gap-4 pt-4 border-t border-brand-border/10">
-                                {project.repoUrl && (
-                                  <a
-                                    href={project.repoUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex items-center gap-2 text-xs font-medium text-brand-text hover:text-brand-accent transition-colors uppercase tracking-wide"
-                                    onClick={() => trackEvent('outbound_click', { section: 'projects', type: 'repo', url: project.repoUrl })}
-                                  >
-                                    <Github size={14} /> {t('software.source')}
-                                  </a>
-                                )}
-                                {project.liveUrl && (
-                                  <a
-                                    href={project.liveUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex items-center gap-2 text-xs font-medium text-brand-text hover:text-brand-accent transition-colors uppercase tracking-wide"
-                                    onClick={() => trackEvent('outbound_click', { section: 'projects', type: 'live', url: project.liveUrl })}
-                                  >
-                                    <ExternalLink size={14} /> {t('software.visit')}
-                                  </a>
-                                )}
-                                {!project.repoUrl && !project.liveUrl && (
-                                  <div className="flex items-center gap-2 text-xs font-bold text-brand-muted/70 uppercase tracking-wide select-none">
-                                    <Lock size={14} /> {t('software.private')}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </SpotlightCard>
+                        </div>
+                      </SpotlightCard>
                     </div>
                   ))}
                 </div>
@@ -780,7 +815,7 @@ const App: React.FC = () => {
         {/* Games Arcade - Carousel Slider */}
         <section id={Section.GAMES} className="py-32 relative bg-brand-surface/30 overflow-hidden select-none">
           <div className="absolute inset-0 bg-[radial-gradient(rgba(var(--color-text),0.05)_1px,transparent_1px)] [background-size:16px_16px] opacity-20"></div>
-          
+
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <ScrollReveal>
               <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-4">
@@ -790,20 +825,20 @@ const App: React.FC = () => {
                     {t('games.title')}
                   </h2>
                   <p className="text-brand-muted max-w-lg text-lg font-light leading-relaxed">
-                     {t('games.subtitle')}
+                    {t('games.subtitle')}
                   </p>
                 </div>
-                
+
                 {/* Games Carousel Navigation (Desktop Only) */}
                 <div className={`hidden md:flex gap-2 ${shouldShowGameNav ? '' : 'opacity-0 pointer-events-none'}`}>
-                  <button 
+                  <button
                     onClick={prevGame}
                     disabled={isPrevGameDisabled}
                     className={`p-3 rounded-full border border-brand-border/10 bg-brand-surfaceHighlight/50 hover:bg-brand-surfaceHighlight text-brand-text transition-all active:scale-95 ${isPrevGameDisabled ? 'opacity-30 cursor-not-allowed' : ''}`}
                   >
                     <ChevronLeft size={24} />
                   </button>
-                  <button 
+                  <button
                     onClick={nextGame}
                     disabled={isNextGameDisabled}
                     className={`p-3 rounded-full border border-brand-border/10 bg-brand-surfaceHighlight/50 hover:bg-brand-surfaceHighlight text-brand-text transition-all active:scale-95 ${isNextGameDisabled ? 'opacity-30 cursor-not-allowed' : ''}`}
@@ -816,7 +851,7 @@ const App: React.FC = () => {
 
             {/* Games Carousel Container */}
             <ScrollReveal animation="slide-up">
-              <div 
+              <div
                 className={`overflow-hidden -mx-4 px-4 py-4 ${isGameDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 ref={gameCarouselRef}
                 style={{ touchAction: 'pan-y' }} // Allows vertical scroll but handles horizontal swipe via JS
@@ -824,80 +859,80 @@ const App: React.FC = () => {
                 onPointerMove={handleGamePointerMove}
                 onPointerUp={handleGamePointerUp}
                 onPointerLeave={handleGamePointerUp} // Safety fallback, though capture handles most cases
-              > 
-                <div 
+              >
+                <div
                   className="flex"
-                  style={{ 
-                     // Dynamic transformation including drag offset
-                     transform: `translateX(calc(${baseGameTranslate}% + ${gameCurrentTranslate}px))`,
-                     transition: isGameDragging ? 'none' : 'transform 0.5s ease-out'
+                  style={{
+                    // Dynamic transformation including drag offset
+                    transform: `translateX(calc(${baseGameTranslate}% + ${gameCurrentTranslate}px))`,
+                    transition: isGameDragging ? 'none' : 'transform 0.5s ease-out'
                   }}
                 >
                   {games.map((game, index) => (
                     (() => {
                       const isActive = activeGameCards.has(game.id);
                       return (
-                    <div 
-                      key={game.id} 
-                      className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3 flex h-auto"
-                    >
                         <div
-                          className="group relative rounded-2xl overflow-hidden bg-brand-surface border border-brand-border/5 hover:border-brand-accent/50 transition-all duration-500 hover:-translate-y-2 shadow-lg hover:shadow-brand-accent/10 h-full flex flex-col w-full"
-                          data-game-id={game.id}
-                          ref={(el) => {
-                            if (el) {
-                              gameCardRefs.current.set(game.id, el);
-                            } else {
-                              gameCardRefs.current.delete(game.id);
-                            }
-                          }}
+                          key={game.id}
+                          className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3 flex h-auto"
                         >
-                          <div className="aspect-[4/3] w-full relative overflow-hidden flex-shrink-0">
-                            <img 
-                              src={game.thumbnailUrl} 
-                              alt={game.title} 
-                              draggable={false}
-                              className={`w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 ${isActive ? 'grayscale-0' : ''}`} 
-                            />
-                            <div className={`absolute inset-0 transition-colors duration-300 ${isActive ? 'bg-brand-bg/40' : 'bg-brand-bg/60'} group-hover:bg-brand-bg/40`}></div>
-                            
-                            <div className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 transform ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} group-hover:opacity-100 group-hover:translate-y-0`}>
-                              <button 
-                                onClick={(e) => {
-                                   e.stopPropagation();
-                                   trackEvent('game_open', { game_id: game.id, game_title: game.title });
-                                   setActiveGame(game);
-                                }}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                className="bg-white text-brand-bg w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-110 transition-transform cursor-pointer"
-                              >
-                                <Play fill="currentColor" className="ml-1" size={24} />
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                   e.stopPropagation();
-                                   trackEvent('game_open', { game_id: game.id, game_title: game.title });
-                                   setActiveGame(game);
-                                }}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                className="mt-4 text-white font-bold tracking-widest text-sm bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm hover:bg-black/70 transition-colors cursor-pointer"
-                              >
-                                {t('games.play_now')}
-                              </button>
+                          <div
+                            className="group relative rounded-2xl overflow-hidden bg-brand-surface border border-brand-border/5 hover:border-brand-accent/50 transition-all duration-500 hover:-translate-y-2 shadow-lg hover:shadow-brand-accent/10 h-full flex flex-col w-full"
+                            data-game-id={game.id}
+                            ref={(el) => {
+                              if (el) {
+                                gameCardRefs.current.set(game.id, el);
+                              } else {
+                                gameCardRefs.current.delete(game.id);
+                              }
+                            }}
+                          >
+                            <div className="aspect-[4/3] w-full relative overflow-hidden flex-shrink-0">
+                              <img
+                                src={game.thumbnailUrl}
+                                alt={game.title}
+                                draggable={false}
+                                className={`w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 ${isActive ? 'grayscale-0' : ''}`}
+                              />
+                              <div className={`absolute inset-0 transition-colors duration-300 ${isActive ? 'bg-brand-bg/40' : 'bg-brand-bg/60'} group-hover:bg-brand-bg/40`}></div>
+
+                              <div className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 transform ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} group-hover:opacity-100 group-hover:translate-y-0`}>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    trackEvent('game_open', { game_id: game.id, game_title: game.title });
+                                    setActiveGame(game);
+                                  }}
+                                  onPointerDown={(e) => e.stopPropagation()}
+                                  className="bg-white text-brand-bg w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-110 transition-transform cursor-pointer"
+                                >
+                                  <Play fill="currentColor" className="ml-1" size={24} />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    trackEvent('game_open', { game_id: game.id, game_title: game.title });
+                                    setActiveGame(game);
+                                  }}
+                                  onPointerDown={(e) => e.stopPropagation()}
+                                  className="mt-4 text-white font-bold tracking-widest text-sm bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm hover:bg-black/70 transition-colors cursor-pointer"
+                                >
+                                  {t('games.play_now')}
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                          
-                          <div className="p-6 bg-brand-surfaceHighlight/30 backdrop-blur-sm border-t border-brand-border/5 flex-1">
-                            <div className="flex justify-between items-center mb-2">
-                              <h3 className="text-xl font-bold text-brand-text truncate pr-2">{game.title}</h3>
-                              <span className="text-[10px] font-mono text-brand-accent border border-brand-accent/30 px-2 py-0.5 rounded uppercase whitespace-nowrap">
-                                {game.engine}
-                              </span>
+
+                            <div className="p-6 bg-brand-surfaceHighlight/30 backdrop-blur-sm border-t border-brand-border/5 flex-1">
+                              <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-xl font-bold text-brand-text truncate pr-2">{game.title}</h3>
+                                <span className="text-[10px] font-mono text-brand-accent border border-brand-accent/30 px-2 py-0.5 rounded uppercase whitespace-nowrap">
+                                  {game.engine}
+                                </span>
+                              </div>
+                              <p className="text-sm text-brand-muted line-clamp-2">{game.description}</p>
                             </div>
-                            <p className="text-sm text-brand-muted line-clamp-2">{game.description}</p>
                           </div>
                         </div>
-                    </div>
                       );
                     })()
                   ))}
@@ -918,55 +953,55 @@ const App: React.FC = () => {
 
             {/* Container for timeline items with relative positioning for the dynamic line */}
             <div className="relative">
-              
+
               {/* The Dynamic Line - Visible on both Mobile and Desktop with different positioning */}
               {/* Mobile: Center of dot is at 2rem (left-6 + 0.5rem). Line width 2px. Line left: calc(2rem - 1px). */}
               {/* Desktop: Center of dot is at 9.5rem + 1px. Line left: 9.5rem. */}
               {/* Vertical: top-2 (0.5rem) to start at center of first dot. */}
               <div className="absolute top-2 bottom-0 left-[calc(2rem-1px)] md:left-[9.5rem] w-[2px] z-0">
-                 <ScrollTriggeredLine />
+                <ScrollTriggeredLine />
               </div>
 
               <div className="space-y-12">
                 {experiences.map((job, idx) => (
                   <ScrollReveal key={job.id} animation="slide-up" threshold={0.1} className="relative pl-14 md:pl-0">
-                     <div className="md:flex gap-12 group relative z-10">
-                        
-                        {/* Timeline Dot with Glow */}
-                        {/* Mobile: align dot center to line at calc(-1.9rem - 1px). */}
-                        {/* Desktop: Left = 9.5rem + 1px (center) - 0.5rem = 9rem + 1px. */}
-                        {/* Vertical: top-0. h-4 (1rem). Center 0.5rem. Matches line start. */}
-                        <div className="absolute top-0 left-[calc(-1.9rem-1px)] md:left-[calc(9rem+1px)] w-4 h-4 rounded-full border-2 border-brand-accent bg-brand-bg group-hover:bg-brand-accent transition-all duration-300 shadow-[0_0_0_4px_rgba(var(--color-bg),1)] group-hover:shadow-[0_0_15px_rgba(99,102,241,0.6)]"></div>
-                        
-                        {/* Date (Desktop Left) */}
-                        <div className="hidden md:block w-32 text-right pt-0.5 flex-shrink-0">
-                          <span className="text-sm font-mono text-brand-muted group-hover:text-brand-text transition-colors">{job.period}</span>
-                        </div>
+                    <div className="md:flex gap-12 group relative z-10">
 
-                        {/* Content */}
-                        <div className="flex-1 pb-12 border-b border-brand-border/5 last:border-0 md:pt-0">
-                          {/* Mobile Date */}
-                          <span className="md:hidden text-xs font-mono text-brand-muted mb-2 block">{job.period}</span>
-                          
-                          <h3 className="text-2xl font-bold text-brand-text mb-1 group-hover:text-brand-accentLight transition-colors">{job.role}</h3>
-                          <div className="text-lg text-brand-muted mb-4">{job.company}</div>
-                          
-                          <ul className="space-y-3 mb-6">
-                            {job.description.map((desc, i) => (
-                              <li key={i} className="text-brand-muted/80 text-base leading-relaxed pl-4 relative before:absolute before:left-0 before:top-2.5 before:w-1.5 before:h-1.5 before:bg-brand-border/20 before:rounded-full group-hover:before:bg-brand-accent transition-colors">
-                                {desc}
-                              </li>
-                            ))}
-                          </ul>
-                          <div className="flex flex-wrap gap-2">
-                            {job.skills.map(skill => (
-                              <span key={skill} className="text-xs text-brand-text/60 bg-brand-surfaceHighlight px-3 py-1 rounded-full group-hover:bg-brand-accent/10 group-hover:text-brand-accent transition-colors">
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
+                      {/* Timeline Dot with Glow */}
+                      {/* Mobile: align dot center to line at calc(-1.9rem - 1px). */}
+                      {/* Desktop: Left = 9.5rem + 1px (center) - 0.5rem = 9rem + 1px. */}
+                      {/* Vertical: top-0. h-4 (1rem). Center 0.5rem. Matches line start. */}
+                      <div className="absolute top-0 left-[calc(-1.9rem-1px)] md:left-[calc(9rem+1px)] w-4 h-4 rounded-full border-2 border-brand-accent bg-brand-bg group-hover:bg-brand-accent transition-all duration-300 shadow-[0_0_0_4px_rgba(var(--color-bg),1)] group-hover:shadow-[0_0_15px_rgba(99,102,241,0.6)]"></div>
+
+                      {/* Date (Desktop Left) */}
+                      <div className="hidden md:block w-32 text-right pt-0.5 flex-shrink-0">
+                        <span className="text-sm font-mono text-brand-muted group-hover:text-brand-text transition-colors">{job.period}</span>
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 pb-12 border-b border-brand-border/5 last:border-0 md:pt-0">
+                        {/* Mobile Date */}
+                        <span className="md:hidden text-xs font-mono text-brand-muted mb-2 block">{job.period}</span>
+
+                        <h3 className="text-2xl font-bold text-brand-text mb-1 group-hover:text-brand-accentLight transition-colors">{job.role}</h3>
+                        <div className="text-lg text-brand-muted mb-4">{job.company}</div>
+
+                        <ul className="space-y-3 mb-6">
+                          {job.description.map((desc, i) => (
+                            <li key={i} className="text-brand-muted/80 text-base leading-relaxed pl-4 relative before:absolute before:left-0 before:top-2.5 before:w-1.5 before:h-1.5 before:bg-brand-border/20 before:rounded-full group-hover:before:bg-brand-accent transition-colors">
+                              {desc}
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="flex flex-wrap gap-2">
+                          {job.skills.map(skill => (
+                            <span key={skill} className="text-xs text-brand-text/60 bg-brand-surfaceHighlight px-3 py-1 rounded-full group-hover:bg-brand-accent/10 group-hover:text-brand-accent transition-colors">
+                              {skill}
+                            </span>
+                          ))}
                         </div>
-                     </div>
+                      </div>
+                    </div>
                   </ScrollReveal>
                 ))}
               </div>
@@ -982,123 +1017,123 @@ const App: React.FC = () => {
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center relative z-10">
-              
-              {/* Profile Photo - Pop in animation with dynamic scroll glow. Repeat=true makes it play again on scroll */}
-              <ScrollReveal animation="scale-in" duration={0.8} className="flex flex-col items-center" repeat={true}>
-                <ScrollGlowingBorder className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden mb-8 relative group bg-brand-surfaceHighlight">
-                  <img 
-                    src={profileImageSrc} 
-                    onError={() => {
-                      if (profileImageSrc !== `${baseUrl}profile.jpg`) {
-                        setProfileImageSrc(`${baseUrl}profile.jpg`);
-                      }
-                    }}
-                    referrerPolicy="no-referrer"
-                    alt="Leandro Ferrete" 
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500"
-                  />
-                </ScrollGlowingBorder>
-              </ScrollReveal>
 
-              {/* Title - Slide up */}
-              <ScrollReveal animation="slide-up" delay={0.2}>
-                <h2 className="text-4xl md:text-6xl font-bold text-brand-text mb-8 tracking-tight">{t('contact.title')}</h2>
-              </ScrollReveal>
+            {/* Profile Photo - Pop in animation with dynamic scroll glow. Repeat=true makes it play again on scroll */}
+            <ScrollReveal animation="scale-in" duration={0.8} className="flex flex-col items-center" repeat={true}>
+              <ScrollGlowingBorder className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden mb-8 relative group bg-brand-surfaceHighlight">
+                <img
+                  src={profileImageSrc}
+                  onError={() => {
+                    if (profileImageSrc !== `${baseUrl}profile.jpg`) {
+                      setProfileImageSrc(`${baseUrl}profile.jpg`);
+                    }
+                  }}
+                  referrerPolicy="no-referrer"
+                  alt="Leandro Ferrete"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-500"
+                />
+              </ScrollGlowingBorder>
+            </ScrollReveal>
 
-              {/* Links - Slide up with delay and sequential wave animation - REPEAT ENABLED */}
-              <ScrollReveal animation="slide-up" delay={0.4} className="group" repeat={true}>
-                <div className="flex justify-center gap-6 sm:gap-8 mb-16 flex-wrap px-4">
-                  {/* LinkedIn - Hover color is brand-text (White). Delay set to 1.3s to start after slide-up ends (1.2s) */}
-                  <a 
-                    href={SOCIAL_LINKS.linkedin} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    title="LinkedIn" 
-                    className="p-4 rounded-full glass-panel text-brand-muted hover:text-brand-text hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
-                    onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'linkedin', url: SOCIAL_LINKS.linkedin })}
-                    style={{ 
-                      animationDelay: '1300ms', 
-                      '--wave-color': 'rgb(var(--color-text))', 
-                      '--wave-shadow': 'rgb(var(--color-text) / 0.5)' 
-                    } as React.CSSProperties}
-                  >
-                    <Linkedin size={24} />
-                  </a>
+            {/* Title - Slide up */}
+            <ScrollReveal animation="slide-up" delay={0.2}>
+              <h2 className="text-4xl md:text-6xl font-bold text-brand-text mb-8 tracking-tight">{t('contact.title')}</h2>
+            </ScrollReveal>
 
-                  {/* Github - Hover color is brand-text (White) */}
-                  <a 
-                    href={SOCIAL_LINKS.github} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    title="GitHub" 
-                    className="p-4 rounded-full glass-panel text-brand-muted hover:text-brand-text hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
-                    onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'github', url: SOCIAL_LINKS.github })}
-                    style={{ 
-                      animationDelay: '1500ms', 
-                      '--wave-color': 'rgb(var(--color-text))', 
-                      '--wave-shadow': 'rgb(var(--color-text) / 0.5)' 
-                    } as React.CSSProperties}
-                  >
-                    <Github size={24} />
-                  </a>
+            {/* Links - Slide up with delay and sequential wave animation - REPEAT ENABLED */}
+            <ScrollReveal animation="slide-up" delay={0.4} className="group" repeat={true}>
+              <div className="flex justify-center gap-6 sm:gap-8 mb-16 flex-wrap px-4">
+                {/* LinkedIn - Hover color is brand-text (White). Delay set to 1.3s to start after slide-up ends (1.2s) */}
+                <a
+                  href={SOCIAL_LINKS.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="LinkedIn"
+                  className="p-4 rounded-full glass-panel text-brand-muted hover:text-brand-text hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
+                  onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'linkedin', url: SOCIAL_LINKS.linkedin })}
+                  style={{
+                    animationDelay: '1300ms',
+                    '--wave-color': 'rgb(var(--color-text))',
+                    '--wave-shadow': 'rgb(var(--color-text) / 0.5)'
+                  } as React.CSSProperties}
+                >
+                  <Linkedin size={24} />
+                </a>
 
-                  {/* YouTube Portfolio - Hover color is Red */}
-                  <a 
-                    href={SOCIAL_LINKS.youtube} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    title="YouTube Portfolio" 
-                    className="p-4 rounded-full glass-panel text-brand-muted hover:text-[#FF0000] hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
-                    onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'youtube_portfolio', url: SOCIAL_LINKS.youtube })}
-                    style={{ 
-                      animationDelay: '1700ms', 
-                      '--wave-color': '#FF0000', 
-                      '--wave-shadow': 'rgba(255, 0, 0, 0.6)' 
-                    } as React.CSSProperties}
-                  >
-                    <Youtube size={24} />
-                  </a>
+                {/* Github - Hover color is brand-text (White) */}
+                <a
+                  href={SOCIAL_LINKS.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="GitHub"
+                  className="p-4 rounded-full glass-panel text-brand-muted hover:text-brand-text hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
+                  onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'github', url: SOCIAL_LINKS.github })}
+                  style={{
+                    animationDelay: '1500ms',
+                    '--wave-color': 'rgb(var(--color-text))',
+                    '--wave-shadow': 'rgb(var(--color-text) / 0.5)'
+                  } as React.CSSProperties}
+                >
+                  <Github size={24} />
+                </a>
 
-                  {/* YouTube Gamer - Hover color is Red */}
-                  <a 
-                    href={SOCIAL_LINKS.youtubeGamer} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    title="GamerSenseBR" 
-                    className="p-4 rounded-full glass-panel text-brand-muted hover:text-[#FF0000] hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
-                    onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'youtube_gamer', url: SOCIAL_LINKS.youtubeGamer })}
-                    style={{ 
-                      animationDelay: '1900ms', 
-                      '--wave-color': '#FF0000', 
-                      '--wave-shadow': 'rgba(255, 0, 0, 0.6)' 
-                    } as React.CSSProperties}
-                  >
-                    <Youtube size={24} />
-                  </a>
+                {/* YouTube Portfolio - Hover color is Red */}
+                <a
+                  href={SOCIAL_LINKS.youtube}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="YouTube Portfolio"
+                  className="p-4 rounded-full glass-panel text-brand-muted hover:text-[#FF0000] hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
+                  onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'youtube_portfolio', url: SOCIAL_LINKS.youtube })}
+                  style={{
+                    animationDelay: '1700ms',
+                    '--wave-color': '#FF0000',
+                    '--wave-shadow': 'rgba(255, 0, 0, 0.6)'
+                  } as React.CSSProperties}
+                >
+                  <Youtube size={24} />
+                </a>
 
-                  {/* Email - Hover color is brand-text (White) */}
-                  <a 
-                    href={SOCIAL_LINKS.email} 
-                    title="Email" 
-                    className="p-4 rounded-full glass-panel text-brand-muted hover:text-brand-text hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
-                    onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'email', url: SOCIAL_LINKS.email })}
-                    style={{ 
-                      animationDelay: '2100ms', 
-                      '--wave-color': 'rgb(var(--color-text))', 
-                      '--wave-shadow': 'rgb(var(--color-text) / 0.5)' 
-                    } as React.CSSProperties}
-                  >
-                    <Mail size={24} />
-                  </a>
-                </div>
-              </ScrollReveal>
+                {/* YouTube Gamer - Hover color is Red */}
+                <a
+                  href={SOCIAL_LINKS.youtubeGamer}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="GamerSenseBR"
+                  className="p-4 rounded-full glass-panel text-brand-muted hover:text-[#FF0000] hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
+                  onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'youtube_gamer', url: SOCIAL_LINKS.youtubeGamer })}
+                  style={{
+                    animationDelay: '1900ms',
+                    '--wave-color': '#FF0000',
+                    '--wave-shadow': 'rgba(255, 0, 0, 0.6)'
+                  } as React.CSSProperties}
+                >
+                  <Youtube size={24} />
+                </a>
 
-              {/* Copyright - Fade in last */}
-              <ScrollReveal animation="fade-in" delay={0.6} duration={2.0} repeat={true} threshold={0.5}>
-                <p className="text-brand-muted/40 text-sm font-light">
-                  {t('contact.copyright', { year: new Date().getFullYear() })}
-                </p>
-              </ScrollReveal>
+                {/* Email - Hover color is brand-text (White) */}
+                <a
+                  href={SOCIAL_LINKS.email}
+                  title="Email"
+                  className="p-4 rounded-full glass-panel text-brand-muted hover:text-brand-text hover:scale-110 transition-all duration-300 group-[.animate-slide-up]:animate-wave-light hover:animate-none"
+                  onClick={() => trackEvent('outbound_click', { section: 'contact', type: 'email', url: SOCIAL_LINKS.email })}
+                  style={{
+                    animationDelay: '2100ms',
+                    '--wave-color': 'rgb(var(--color-text))',
+                    '--wave-shadow': 'rgb(var(--color-text) / 0.5)'
+                  } as React.CSSProperties}
+                >
+                  <Mail size={24} />
+                </a>
+              </div>
+            </ScrollReveal>
+
+            {/* Copyright - Fade in last */}
+            <ScrollReveal animation="fade-in" delay={0.6} duration={2.0} repeat={true} threshold={0.5}>
+              <p className="text-brand-muted/40 text-sm font-light">
+                {t('contact.copyright', { year: new Date().getFullYear() })}
+              </p>
+            </ScrollReveal>
           </div>
         </section>
 
@@ -1112,7 +1147,7 @@ const App: React.FC = () => {
             }}
           />
         )}
-        
+
         {/* AI Assistant Chatbot */}
         {/* <AiAssistant /> */}
       </div>

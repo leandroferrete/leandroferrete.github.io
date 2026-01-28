@@ -10,7 +10,12 @@ const resources = {
         work: 'Work',
         play: 'Play',
         path: 'Path',
+        path: 'Path',
         contact: 'Contact'
+      },
+      meta: {
+        title: 'Leandro Ferrete | Senior .NET Engineer & AI Architect',
+        description: 'Senior .NET Engineer & AI Specialist. Expert in High-Performance Microservices, Clean Architecture, and Interactive Game Development. View the portfolio of Leandro Ferrete.'
       },
       hero: {
         badge: 'Leandro Ferrete Portfolio',
@@ -83,11 +88,11 @@ const resources = {
             ]
           },
           '4': {
-             role: 'IT Intern',
-             description: [
-                'Developed internal automation tools and web systems using .NET ecosystem.',
-                'Maintained operational continuity for large-scale corporate infrastructure.'
-             ]
+            role: 'IT Intern',
+            description: [
+              'Developed internal automation tools and web systems using .NET ecosystem.',
+              'Maintained operational continuity for large-scale corporate infrastructure.'
+            ]
           },
           '5': {
             role: 'IT Technician',
@@ -118,10 +123,10 @@ const resources = {
             description: 'Fast-paced arcade shooter showcasing optimized physics and AI enemy behaviors.'
           },
           'g2': {
-             description: 'Procedural generation engine creating infinite, unique levels in real-time.'
+            description: 'Procedural generation engine creating infinite, unique levels in real-time.'
           },
           'g3': {
-             description: 'Logic puzzle game featuring a custom state-machine solver.'
+            description: 'Logic puzzle game featuring a custom state-machine solver.'
           }
         }
       }
@@ -134,7 +139,12 @@ const resources = {
         work: 'Projetos',
         play: 'Jogos',
         path: 'Jornada',
+        path: 'Jornada',
         contact: 'Contato'
+      },
+      meta: {
+        title: 'Leandro Ferrete | Engenheiro .NET Sênior & Arquiteto de IA',
+        description: 'Engenheiro de Software Sênior .NET & Especialista em IA. Focado em Microsserviços de Alta Performance, Clean Architecture e Jogos Interativos. Veja o portfólio de Leandro Ferrete.'
       },
       hero: {
         badge: 'Portfólio Leandro Ferrete',
@@ -207,10 +217,10 @@ const resources = {
           },
           '4': {
             role: 'Estagiário de TI',
-             description: [
-                'Desenvolvimento de ferramentas de automação interna e sistemas web utilizando o ecossistema .NET.',
-                'Manutenção da continuidade operacional de infraestruturas corporativas de grande porte.'
-             ]
+            description: [
+              'Desenvolvimento de ferramentas de automação interna e sistemas web utilizando o ecossistema .NET.',
+              'Manutenção da continuidade operacional de infraestruturas corporativas de grande porte.'
+            ]
           },
           '5': {
             role: 'Técnico de Informática',
@@ -241,10 +251,10 @@ const resources = {
             description: 'Shooter arcade rápido demonstrando física otimizada e comportamentos de inimigos via IA.'
           },
           'g2': {
-             description: 'Engine de geração procedural criando níveis infinitos e únicos em tempo real.'
+            description: 'Engine de geração procedural criando níveis infinitos e únicos em tempo real.'
           },
           'g3': {
-             description: 'Puzzle de lógica focado em resolução algorítmica e máquinas de estado.'
+            description: 'Puzzle de lógica focado em resolução algorítmica e máquinas de estado.'
           }
         }
       }
@@ -257,7 +267,12 @@ const resources = {
         work: 'Proyectos',
         play: 'Juegos',
         path: 'Trayectoria',
+        path: 'Trayectoria',
         contact: 'Contacto'
+      },
+      meta: {
+        title: 'Leandro Ferrete | Ingeniero .NET Senior & Arquitecto de IA',
+        description: 'Ingeniero .NET Senior y Especialista en IA. Experto en Microservicios de Alto Rendimiento, Clean Architecture y Desarrollo de Juegos. Ve el portafolio de Leandro Ferrete.'
       },
       hero: {
         badge: 'Portafolio Leandro Ferrete',
@@ -330,10 +345,10 @@ const resources = {
           },
           '4': {
             role: 'Pasante de TI',
-             description: [
-                'Desarrollo de herramientas de automatización interna y sistemas web utilizando el ecosistema .NET.',
-                'Mantenimiento de la continuidad operativa de infraestructuras corporativas a gran escala.'
-             ]
+            description: [
+              'Desarrollo de herramientas de automatización interna y sistemas web utilizando el ecosistema .NET.',
+              'Mantenimiento de la continuidad operativa de infraestructuras corporativas a gran escala.'
+            ]
           },
           '5': {
             role: 'Técnico Informático',
@@ -364,10 +379,10 @@ const resources = {
             description: 'Shooter arcade rápido demostrando física optimizada y comportamientos de enemigos vía IA.'
           },
           'g2': {
-             description: 'Motor de generación procedimental creando niveles infinitos y únicos en tiempo real.'
+            description: 'Motor de generación procedimental creando niveles infinitos y únicos en tiempo real.'
           },
           'g3': {
-             description: 'Juego de lógica enfocado en resolución algorítmica y máquinas de estado.'
+            description: 'Juego de lógica enfocado en resolución algorítmica y máquinas de estado.'
           }
         }
       }
