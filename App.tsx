@@ -22,6 +22,8 @@ const App: React.FC = () => {
   const sessionStartRef = useRef<number>(Date.now());
   const lastActiveRef = useRef<number>(Date.now());
   const gameScoreMilestonesRef = useRef<Set<number>>(new Set());
+  const gameCardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const [activeGameCards, setActiveGameCards] = useState<Set<string>>(new Set());
   
   // Theme State
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
@@ -320,6 +322,62 @@ const App: React.FC = () => {
     game.description &&
     !game.description.startsWith('data.games.')
   ));
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 767px)');
+    let observer: IntersectionObserver | null = null;
+
+    const setupObserver = () => {
+      if (observer) {
+        observer.disconnect();
+        observer = null;
+      }
+
+      if (!mql.matches) {
+        setActiveGameCards(new Set());
+        return;
+      }
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          setActiveGameCards((prev) => {
+            const next = new Set(prev);
+            entries.forEach((entry) => {
+              const id = (entry.target as HTMLElement).dataset.gameId;
+              if (!id) return;
+              if (entry.isIntersecting) {
+                next.add(id);
+              } else {
+                next.delete(id);
+              }
+            });
+            return next;
+          });
+        },
+        { threshold: 0.6 }
+      );
+
+      gameCardRefs.current.forEach((el) => observer?.observe(el));
+    };
+
+    setupObserver();
+
+    const handleChange = () => setupObserver();
+    if (mql.addEventListener) {
+      mql.addEventListener('change', handleChange);
+    } else {
+      mql.addListener(handleChange);
+    }
+
+    return () => {
+      if (observer) observer.disconnect();
+      if (mql.removeEventListener) {
+        mql.removeEventListener('change', handleChange);
+      } else {
+        mql.removeListener(handleChange);
+      }
+    };
+  }, [games.length]);
 
   // Ensure carousel indexes stay within bounds
   useEffect(() => {
@@ -776,21 +834,34 @@ const App: React.FC = () => {
                   }}
                 >
                   {games.map((game, index) => (
+                    (() => {
+                      const isActive = activeGameCards.has(game.id);
+                      return (
                     <div 
                       key={game.id} 
                       className="w-full md:w-1/2 lg:w-1/3 flex-shrink-0 px-3 flex h-auto"
                     >
-                        <div className="group relative rounded-2xl overflow-hidden bg-brand-surface border border-brand-border/5 hover:border-brand-accent/50 transition-all duration-500 hover:-translate-y-2 shadow-lg hover:shadow-brand-accent/10 h-full flex flex-col w-full">
+                        <div
+                          className="group relative rounded-2xl overflow-hidden bg-brand-surface border border-brand-border/5 hover:border-brand-accent/50 transition-all duration-500 hover:-translate-y-2 shadow-lg hover:shadow-brand-accent/10 h-full flex flex-col w-full"
+                          data-game-id={game.id}
+                          ref={(el) => {
+                            if (el) {
+                              gameCardRefs.current.set(game.id, el);
+                            } else {
+                              gameCardRefs.current.delete(game.id);
+                            }
+                          }}
+                        >
                           <div className="aspect-[4/3] w-full relative overflow-hidden flex-shrink-0">
                             <img 
                               src={game.thumbnailUrl} 
                               alt={game.title} 
                               draggable={false}
-                              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
+                              className={`w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 ${isActive ? 'grayscale-0' : ''}`} 
                             />
-                            <div className="absolute inset-0 bg-brand-bg/60 group-hover:bg-brand-bg/40 transition-colors duration-300"></div>
+                            <div className={`absolute inset-0 transition-colors duration-300 ${isActive ? 'bg-brand-bg/40' : 'bg-brand-bg/60'} group-hover:bg-brand-bg/40`}></div>
                             
-                            <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                            <div className={`absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 transform ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} group-hover:opacity-100 group-hover:translate-y-0`}>
                               <button 
                                 onClick={(e) => {
                                    e.stopPropagation();
@@ -827,6 +898,8 @@ const App: React.FC = () => {
                           </div>
                         </div>
                     </div>
+                      );
+                    })()
                   ))}
                 </div>
               </div>
