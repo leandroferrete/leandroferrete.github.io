@@ -860,10 +860,10 @@ const App: React.FC = () => {
                      <div className="md:flex gap-12 group relative z-10">
                         
                         {/* Timeline Dot with Glow */}
-                        {/* Mobile: left-6 (1.5rem). w-4 (1rem). Center = 2rem. Matches line. */}
+                        {/* Mobile: align dot center to line at calc(-1.9rem - 1px). */}
                         {/* Desktop: Left = 9.5rem + 1px (center) - 0.5rem = 9rem + 1px. */}
                         {/* Vertical: top-0. h-4 (1rem). Center 0.5rem. Matches line start. */}
-                        <div className="absolute top-0 left-6 md:left-[calc(9rem+1px)] w-4 h-4 rounded-full border-2 border-brand-accent bg-brand-bg group-hover:bg-brand-accent transition-all duration-300 shadow-[0_0_0_4px_rgba(var(--color-bg),1)] group-hover:shadow-[0_0_15px_rgba(99,102,241,0.6)]"></div>
+                        <div className="absolute top-0 left-[calc(-1.9rem-1px)] md:left-[calc(9rem+1px)] w-4 h-4 rounded-full border-2 border-brand-accent bg-brand-bg group-hover:bg-brand-accent transition-all duration-300 shadow-[0_0_0_4px_rgba(var(--color-bg),1)] group-hover:shadow-[0_0_15px_rgba(99,102,241,0.6)]"></div>
                         
                         {/* Date (Desktop Left) */}
                         <div className="hidden md:block w-32 text-right pt-0.5 flex-shrink-0">
