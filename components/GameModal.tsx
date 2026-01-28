@@ -6,9 +6,10 @@ import { useTranslation } from 'react-i18next';
 interface GameModalProps {
   game: Game;
   onClose: () => void;
+  autoFullscreen?: boolean;
 }
 
-const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
+const GameModal: React.FC<GameModalProps> = ({ game, onClose, autoFullscreen }) => {
   const [loading, setLoading] = React.useState(true);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const { t } = useTranslation();
@@ -35,6 +36,16 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
     if (gtag) gtag('event', 'game_fullscreen_enter');
   };
 
+  React.useEffect(() => {
+    if (autoFullscreen) {
+      // Small timeout to ensure ref is attached and browser is ready
+      const timer = setTimeout(() => {
+        toggleFullscreen().catch((err) => console.warn('Auto-fullscreen blocked:', err));
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-brand-bg/95 backdrop-blur-md p-4 animate-fade-in">
       <div
@@ -44,10 +55,10 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
         {/* Header */}
         <div className="flex justify-between items-center p-4 bg-brand-surface border-b border-white/10">
           <div className="flex items-center gap-3">
-             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-             <h3 className="text-lg font-medium text-white tracking-wide">
-               {game.title}
-             </h3>
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            <h3 className="text-lg font-medium text-white tracking-wide">
+              {game.title}
+            </h3>
           </div>
           <div className="flex items-center gap-2">
             <button

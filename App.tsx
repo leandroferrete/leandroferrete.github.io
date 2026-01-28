@@ -804,6 +804,21 @@ const App: React.FC = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Pagination Dots */}
+              <div className="flex justify-center mt-8 gap-3">
+                {projects.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => scrollToIndex(idx, projectCarouselRef, setProjectCarouselIndex)}
+                    className={`h-2 rounded-full transition-all duration-300 ${Math.round(projectCarouselIndex) === idx
+                      ? 'w-8 bg-brand-accent shadow-[0_0_10px_rgba(var(--color-accent),0.5)]'
+                      : 'w-2 bg-brand-border/30 hover:bg-brand-border/60'
+                      }`}
+                    aria-label={`Go to project ${idx + 1}`}
+                  />
+                ))}
+              </div>
             </ScrollReveal>
           </div>
         </section>
@@ -1137,6 +1152,7 @@ const App: React.FC = () => {
         {activeGame && (
           <GameModal
             game={activeGame}
+            autoFullscreen={true}
             onClose={() => {
               trackEvent('game_close', { game_id: activeGame.id, game_title: activeGame.title });
               closeGame();
