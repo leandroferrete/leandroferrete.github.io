@@ -1,33 +1,227 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leandro Ferrete | Software Engineer</title>
 
-<head>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-    crossorigin="anonymous"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ND6X7QQWFB"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ND6X7QQWFB', { send_page_view: false, anonymize_ip: true });
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Outfit', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                bg: 'rgb(var(--color-bg) / <alpha-value>)',
+                surface: 'rgb(var(--color-surface) / <alpha-value>)',
+                surfaceHighlight: 'rgb(var(--color-surface-highlight) / <alpha-value>)',
+                accent: 'rgb(var(--color-accent) / <alpha-value>)',
+                accentLight: 'rgb(var(--color-accent-light) / <alpha-value>)',
+                text: 'rgb(var(--color-text) / <alpha-value>)',
+                muted: 'rgb(var(--color-muted) / <alpha-value>)',
+                border: 'rgb(var(--color-border) / <alpha-value>)',
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.8s ease-out forwards',
+              'slide-up': 'slideUp 0.8s ease-out forwards',
+              'scale-in': 'scaleIn 0.5s ease-out forwards',
+              'float': 'float 8s ease-in-out infinite',
+              'pulse-glow': 'pulseGlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'wave-light': 'waveLight 0.6s ease-in-out 1',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(40px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              scaleIn: {
+                 '0%': { transform: 'scale(0.9)', opacity: '0' },
+                 '100%': { transform: 'scale(1)', opacity: '1' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              pulseGlow: {
+                '0%, 100%': { opacity: '0.5', transform: 'scale(1)' },
+                '50%': { opacity: '0.8', transform: 'scale(1.05)' },
+              },
+              waveLight: {
+                '0%, 100%': { 
+                  borderColor: 'var(--glass-border)', 
+                  boxShadow: 'none', 
+                  transform: 'scale(1)',
+                  color: 'rgb(var(--color-muted))'
+                },
+                '50%': { 
+                  borderColor: 'var(--wave-color)', 
+                  boxShadow: '0 0 20px var(--wave-shadow)', 
+                  transform: 'scale(1.15)',
+                  color: 'var(--wave-color)'
+                }
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      :root {
+        /* Default Dark Theme (Slate/Indigo) */
+        --color-bg: 2 6 23;        /* #020617 */
+        --color-surface: 15 23 42; /* #0f172a */
+        --color-surface-highlight: 30 41 59; /* #1e293b */
+        --color-accent: 99 102 241; /* #6366f1 */
+        --color-accent-light: 129 140 248; /* #818cf8 */
+        --color-text: 248 250 252; /* #f8fafc */
+        --color-muted: 148 163 184; /* #94a3b8 */
+        --color-border: 255 255 255; /* White (for glass borders) */
+        
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.05);
+        --glass-nav: rgba(2, 6, 23, 0.7);
+        --noise-opacity: 0.15;
+      }
 
-  <meta charset="utf-8">
-  <title>Leandro Ferrete Portfolio</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
-  <link rel="manifest" href="/assets/favicon/site.webmanifest">
+      body.light-theme {
+        /* Clean White Theme */
+        --color-bg: 250 250 250;     /* #fafafa (Off-white) */
+        --color-surface: 255 255 255; /* #ffffff */
+        --color-surface-highlight: 241 245 249; /* #f1f5f9 */
+        --color-accent: 79 70 229;    /* #4f46e5 (Indigo 600 - stronger for light mode) */
+        --color-accent-light: 99 102 241; /* #6366f1 */
+        --color-text: 15 23 42;       /* #0f172a (Slate 900 - Dark Text) */
+        --color-muted: 100 116 139;   /* #64748b (Slate 500 - Darker muted) */
+        --color-border: 0 0 0;        /* Black (for borders) */
+
+        --glass-bg: rgba(255, 255, 255, 0.6);
+        --glass-border: rgba(0, 0, 0, 0.05);
+        --glass-nav: rgba(255, 255, 255, 0.85);
+        --noise-opacity: 0.05;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgb(var(--color-bg));
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgb(var(--color-surface-highlight));
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgb(var(--color-muted));
+      }
+      
+      body {
+        background-color: rgb(var(--color-bg));
+        color: rgb(var(--color-text));
+        transition: background-color 0.5s ease, color 0.5s ease;
+      }
+
+      /* Dynamic Background Noise/Gradient */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background-image: 
+          radial-gradient(at 0% 0%, rgba(99, 102, 241, var(--noise-opacity)) 0px, transparent 50%),
+          radial-gradient(at 100% 100%, rgba(168, 85, 247, var(--noise-opacity)) 0px, transparent 50%);
+        background-attachment: fixed;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+      }
+      
+      .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      /* In light mode, add a subtle shadow to glass panels for depth */
+      body.light-theme .glass-panel {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      }
+
+      .glass-nav {
+        background: var(--glass-nav);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        transition: background 0.3s ease, border-color 0.3s ease;
+      }
+
+      /* Text Gradients that adapt */
+      .text-gradient {
+        background: linear-gradient(to right, rgb(var(--color-text)), rgb(var(--color-muted)));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .text-gradient-accent {
+        background: linear-gradient(to right, rgb(var(--color-accent)), rgb(var(--color-accent-light)));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      .opacity-0-forced {
+        opacity: 0 !important;
+      }
+
+      /* Helper utility to invert text on dark backgrounds in light mode if needed */
+      .inverse-text {
+        color: #f8fafc;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.13.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "i18next": "https://esm.sh/i18next@^23.7.16",
+    "react-i18next": "https://esm.sh/react-i18next@^14.0.0",
+    "i18next-browser-languagedetector": "https://esm.sh/i18next-browser-languagedetector@^7.2.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="./index.css">
 </head>
-
-
-<body>
-  <app-root></app-root>
-<script type="text/javascript" src="runtime.js"></script><script type="text/javascript" src="es2015-polyfills.js" nomodule></script><script type="text/javascript" src="polyfills.js"></script><script type="text/javascript" src="styles.js"></script><script type="text/javascript" src="vendor.js"></script><script type="text/javascript" src="main.js"></script></body>
-
+  <body class="antialiased selection:bg-brand-accent selection:text-white overflow-x-hidden">
+    <div id="root"></div>
+  <script type="module" src="./index.tsx"></script>
+</body>
 </html>
