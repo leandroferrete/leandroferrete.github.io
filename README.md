@@ -1,20 +1,41 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Leandro Ferrete — Portfolio
 
-# Run and deploy your AI Studio app
+Portfolio site built with React + Vite + Tailwind (local build).  
+Includes the OrbiDash game embedded in the Playground section and GA4 tracking.
 
-This contains everything you need to run your app locally.
+## Tech Stack
+- Vite + React (TypeScript)
+- Tailwind CSS (local build via PostCSS)
+- i18next (EN/PT/ES)
+- GA4 (gtag)
 
-View your app in AI Studio: https://ai.studio/apps/drive/1XiLM_-m-lHZ4dILN5cyeIvog0jTbxTYN
+## Development
+```bash
+npm install
+npm run dev
+```
 
-## Run Locally
+## Build
+```bash
+npm run build
+npm run preview
+```
 
-**Prerequisites:**  Node.js
+## Deploy (GitHub Pages)
+This repo is configured to publish **only `dist/`** using GitHub Actions.
 
+1. GitHub → Settings → Pages
+2. Source: **GitHub Actions**
+3. Push to `master` (or run the workflow manually)
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+`CNAME` is copied into `dist/` during deploy for custom domains.
+
+## Project Structure
+- `App.tsx`: main layout and UI
+- `components/`: UI components and animations
+- `public/games/orbidash/`: OrbiDash build (embedded via iframe)
+- `i18n.ts`: translations
+
+## Notes
+- OrbiDash is hosted from `public/games/orbidash/`.
+- GA4 is loaded in `index.html`, events are fired from `App.tsx` and the game via `postMessage`.
