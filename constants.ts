@@ -120,7 +120,7 @@ export const GAMES_METADATA: GameMetadata[] = [
   {
     id: 'g2',
     title: 'Chroma Catch',
-    thumbnailUrl: 'games/chroma-catch/thumbnail.png',
+    thumbnailUrl: 'games/chroma-catch/thumbnail.jpg',
     gameUrl: 'games/chroma-catch/index.html',
     genre: 'Arcade',
     engine: 'HTML5'
