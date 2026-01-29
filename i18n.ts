@@ -123,7 +123,7 @@ const resources = {
             description: 'Minimalist puzzle game with tight controls, rhythmic pacing, and a bold red aesthetic.'
           },
           'g2': {
-            description: 'Procedural generation engine creating infinite, unique levels in real-time.'
+            description: 'Color-matching arcade where speed and precision are everything.'
           },
           'g3': {
             description: 'Logic puzzle game featuring a custom state-machine solver.'
@@ -251,7 +251,7 @@ const resources = {
             description: 'Puzzle minimalista com controles precisos, ritmo consistente e uma estética vermelha marcante.'
           },
           'g2': {
-            description: 'Engine de geração procedural criando níveis infinitos e únicos em tempo real.'
+            description: 'Arcade de cores com foco em reflexo e precisão em alta velocidade.'
           },
           'g3': {
             description: 'Puzzle de lógica focado em resolução algorítmica e máquinas de estado.'
@@ -379,7 +379,7 @@ const resources = {
             description: 'Shooter arcade rápido demostrando física optimizada y comportamientos de enemigos vía IA.'
           },
           'g2': {
-            description: 'Motor de generación procedimental creando niveles infinitos y únicos en tiempo real.'
+            description: 'Arcade de colores donde la velocidad y la precision lo son todo.'
           },
           'g3': {
             description: 'Juego de lógica enfocado en resolución algorítmica y máquinas de estado.'

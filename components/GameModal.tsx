@@ -90,7 +90,7 @@ const GameModal: React.FC<GameModalProps> = ({ game, onClose, autoFullscreen }) 
             src={game.gameUrl}
             title={game.title}
             className="w-full h-full border-0"
-            allow="autoplay; fullscreen; gamepad; focus-without-user-activation"
+            allow="autoplay; fullscreen; gamepad"
             allowFullScreen
             onLoad={() => setLoading(false)}
           />

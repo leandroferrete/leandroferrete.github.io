@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Github, Linkedin, Mail, ExternalLink, ChevronDown, ChevronLeft, ChevronRight, Play, Code2, Lock, Sun, Moon, Youtube, Menu, X, Loader2 } from './components/Icons';
 import { HashRouter } from 'react-router-dom';
 import { EXPERIENCE_METADATA, GAMES_METADATA, PROJECTS_METADATA, SOCIAL_LINKS } from './constants';
@@ -327,34 +327,38 @@ const App: React.FC = () => {
     description: t(`data.jobs.${job.id}.description`, { returnObjects: true }) as string[]
   }));
 
-  const projects = PROJECTS_METADATA.map((proj) => {
-    const titleKey = `data.projects.${proj.id}.title`;
-    const descriptionKey = `data.projects.${proj.id}.description`;
-    const title = t(titleKey);
-    const description = t(descriptionKey);
+  const projects = useMemo(() => (
+    PROJECTS_METADATA.map((proj) => {
+      const titleKey = `data.projects.${proj.id}.title`;
+      const descriptionKey = `data.projects.${proj.id}.description`;
+      const title = t(titleKey);
+      const description = t(descriptionKey);
 
-    return {
-      ...proj,
-      title,
-      description
-    };
-  }).filter((proj) => (
-    proj.title && proj.description &&
-    !proj.title.startsWith('data.projects.') &&
-    !proj.description.startsWith('data.projects.')
-  ));
+      return {
+        ...proj,
+        title,
+        description
+      };
+    }).filter((proj) => (
+      proj.title && proj.description &&
+      !proj.title.startsWith('data.projects.') &&
+      !proj.description.startsWith('data.projects.')
+    ))
+  ), [t, i18n.resolvedLanguage]);
 
-  const games = GAMES_METADATA.map((game) => {
-    const descriptionKey = `data.games.${game.id}.description`;
-    const description = t(descriptionKey);
-    return {
-      ...game,
-      description
-    };
-  }).filter((game) => (
-    game.description &&
-    !game.description.startsWith('data.games.')
-  ));
+  const games = useMemo(() => (
+    GAMES_METADATA.map((game) => {
+      const descriptionKey = `data.games.${game.id}.description`;
+      const description = t(descriptionKey);
+      return {
+        ...game,
+        description
+      };
+    }).filter((game) => (
+      game.description &&
+      !game.description.startsWith('data.games.')
+    ))
+  ), [t, i18n.resolvedLanguage]);
 
   const openGame = (game: Game) => {
     trackEvent('game_open', { game_id: game.id, game_title: game.title });
@@ -434,7 +438,7 @@ const App: React.FC = () => {
       }
       const gameId = match[1];
       const game = games.find((g) => g.id === gameId);
-      if (game) {
+      if (game && activeGame?.id !== game.id) {
         setActiveGame(game);
         trackEvent('game_deeplink_open', { game_id: game.id, game_title: game.title });
         scrollTo(Section.GAMES);
@@ -444,7 +448,7 @@ const App: React.FC = () => {
     handleGameHash();
     window.addEventListener('hashchange', handleGameHash);
     return () => window.removeEventListener('hashchange', handleGameHash);
-  }, [games]);
+  }, [games, activeGame?.id]);
 
   // Ensure carousel indexes stay within bounds
   useEffect(() => {

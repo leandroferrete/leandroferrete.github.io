@@ -116,6 +116,14 @@ export const GAMES_METADATA: GameMetadata[] = [
     gameUrl: 'games/bloc-game/index.html',
     genre: 'Puzzle',
     engine: 'HTML5'
+  },
+  {
+    id: 'g2',
+    title: 'Chroma Catch',
+    thumbnailUrl: 'games/chroma-catch/thumbnail.png',
+    gameUrl: 'games/chroma-catch/index.html',
+    genre: 'Arcade',
+    engine: 'HTML5'
   }
 ];
 
